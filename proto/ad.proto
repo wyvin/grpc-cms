@@ -1,0 +1,153 @@
+// 广告内容模块
+syntax = "proto3";
+package proto;
+
+import "google/api/annotations.proto";
+
+service Ad {
+    rpc MigrateAd(MigrateAdRequest) returns (MigrateAdResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/ad/migrate"
+        };
+    }
+    rpc AddAd(AddAdRequest) returns (AddAdResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/ad/add"
+            body: "*"
+        };
+    }
+    rpc DeleteAd(DeleteAdRequest) returns (DeleteAdResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/ad/delete"
+            body: "*"
+        };
+    }
+    rpc GetAdList(GetAdListRequest) returns (GetAdListResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/ad/list"
+        };
+    }
+    rpc EditAd(EditAdRequest) returns (EditAdResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/ad/edit"
+            body: "*"
+        };
+    }
+    rpc GetAdPlacementList(GetAdPlacementListRequest) returns (GetAdPlacementListResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/ad/placement_list"
+        };
+    }
+}
+
+message MigrateAdRequest {}
+
+message MigrateAdResponse {
+    string message = 1;
+}
+
+// 增
+message AddAdRequest {
+    string appid = 1;
+    uint32 groupid = 2;
+    string name = 3;
+    string title = 4;
+    string description = 5;
+    string remark = 6;
+    string cover = 7;
+    string url = 8;
+    uint32 priority = 9;
+    uint32 display = 10;
+    uint32 state = 11;
+}
+
+message AddAdResponse {
+    uint32 adid = 1;
+}
+
+// 删
+message DeleteAdRequest {
+    string appid = 1;
+    uint32 groupid = 2;
+    repeated uint32 adid_list = 3;
+}
+
+message DeleteAdResponse {
+    uint32 rows_affected = 1;
+}
+
+// 查
+message GetAdListRequest {
+    string appid = 1;
+    uint32 groupid = 2;
+    uint32 page = 3;
+    uint32 per_page = 4;
+    string name = 5;
+    string title = 6;
+    uint32 display = 7;
+    uint32 state = 8;
+}
+
+message GetAdListResponse {
+    repeated AdListElement list = 1;
+    uint32 total = 2;
+}
+
+message AdListElement {
+    uint32 adid = 1;
+    string name = 2;
+    string title = 3;
+    string description = 4;
+    string remark = 5;
+    string cover = 6;
+    string url = 7;
+    uint32 priority = 8;
+    uint32 display = 9;
+    string create_at = 10;
+}
+
+// 改
+message EditAdRequest {
+    string appid = 1;
+    uint32 groupid = 2;
+    uint32 adid = 3;
+    string name = 4;
+    string title = 5;
+    string description = 6;
+    string remark = 7;
+    string cover = 8;
+    string url = 9;
+    uint32 priority = 10;
+    uint32 display = 11;
+    uint32 state = 12;
+}
+
+message EditAdResponse {
+    uint32 rows_affected = 1;
+}
+
+// 获取广告投放列表
+message GetAdPlacementListRequest {
+    string appid = 1;
+    uint32 groupid = 2;
+    uint32 page = 3;
+    uint32 per_page = 4;
+}
+
+message GetAdPlacementListResponse {
+    repeated AdPlacementListElement list = 1;
+    uint32 total = 2;
+}
+
+message AdPlacementListElement {
+    uint32 adid = 1;
+    string name = 2;
+    string title = 3;
+    string description = 4;
+    string remark = 5;
+    string cover = 6;
+    string url = 7;
+    uint32 priority = 8;
+    uint32 display = 9;
+}
+
