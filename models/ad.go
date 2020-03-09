@@ -6,8 +6,8 @@ import (
 
 type Ad struct {
 	gorm.Model
-	Appid       string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'应用ID'"`
-	Groupid     uint32 `gorm:"NOT NULL;default:0;comment:'用户组ID'"`
+	AppId       string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'应用ID'"`
+	GroupId     uint32 `gorm:"NOT NULL;default:0;comment:'用户组ID'"`
 	Name        string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'广告名'"`
 	Title       string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'标题'"`
 	Description string `gorm:"type:varchar(128);NOT NULL;default:'';comment:'描述'"`
@@ -20,35 +20,21 @@ type Ad struct {
 }
 
 const (
-	AdStateUnreleased = 1
-	AdStateReleased   = 2
-	AdStateCeased     = 3
+	StateUnreleased = 1 // 未发布
+	StateReleased   = 2 // 已发布
+	StateCeased     = 3 // 停止/下架
 )
 
 func MigrateAd() error {
-	if err := db.AutoMigrate(&Ad{}).Error; err != nil {
+	if err := DB.AutoMigrate(&Ad{}).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func ExistAdByName(name string) (bool, error) {
+func ExistAdByID(appId string, groupId, adId uint32) (bool, error) {
 	var ad Ad
-	err := db.Select("id").Where("name = ?", name).First(&ad).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return false, err
-	}
-
-	if ad.ID > 0 {
-		return true, nil
-	}
-
-	return false, nil
-}
-
-func ExistAdByID(appid string, groupid, adid uint32) (bool, error) {
-	var ad Ad
-	err := db.Select("id").Where("appid = ? AND groupid = ? AND id = ?", appid, groupid, adid).First(&ad).Error
+	err := DB.Select("id").Where("app_id = ? AND group_id = ? AND id = ?", appId, groupId, adId).First(&ad).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -59,10 +45,10 @@ func ExistAdByID(appid string, groupid, adid uint32) (bool, error) {
 }
 
 // 插入广告
-func InsertAd(appid string, groupid uint32, name, title, description, remark, cover, url string, priority, display, state uint32) (uint32, error) {
+func InsertAd(appId string, groupId uint32, name, title, description, remark, cover, url string, priority, display, state uint32) (uint32, error) {
 	ad := Ad{
-		Appid:       appid,
-		Groupid:     groupid,
+		AppId:       appId,
+		GroupId:     groupId,
 		Name:        name,
 		Title:       title,
 		Description: description,
@@ -73,7 +59,7 @@ func InsertAd(appid string, groupid uint32, name, title, description, remark, co
 		Display:     display,
 		State:       state,
 	}
-	if err := db.Create(&ad).Error; err != nil {
+	if err := DB.Create(&ad).Error; err != nil {
 		return 0, err
 	}
 
@@ -88,12 +74,12 @@ func GetAdList(page, perPage uint32, name, title string, maps interface{}) ([]Ad
 		err    error
 	)
 
-	record := db.Model(&Ad{}).Where(maps)
+	record := DB.Model(&Ad{}).Where(maps)
 	if name != "" {
-		record = record.Where("name LIKE ?", "%" + name + "%")
+		record = record.Where("name LIKE ?", "%"+name+"%")
 	}
 	if title != "" {
-		record = record.Where("title LIKE ?", "%" + title + "%")
+		record = record.Where("title LIKE ?", "%"+title+"%")
 	}
 	err = record.Offset(page).Limit(perPage).Find(&adList).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
@@ -105,21 +91,21 @@ func GetAdList(page, perPage uint32, name, title string, maps interface{}) ([]Ad
 }
 
 // 编辑广告
-func EditAd(appid string, groupid, adid uint32, data interface{}) (uint32, error) {
-	result := db.Model(&Ad{}).Where("appid = ? AND groupid = ? AND id = ?", appid, groupid, adid).Updates(data)
+func EditAd(appId string, groupId, adId uint32, data interface{}) (uint32, error) {
+	result := DB.Model(&Ad{}).Where("app_id = ? AND group_id = ? AND id = ?", appId, groupId, adId).Updates(data)
 	if result.Error != nil {
 		return 0, result.Error
 	}
-	return  uint32(result.RowsAffected), nil
+	return uint32(result.RowsAffected), nil
 }
 
 // 批量删除广告
-func DeleteAd(appid string, groupid uint32, adidList []uint32) (uint32, error) {
-	result := db.Where("appid = ? AND groupid = ? AND id IN (?)", appid, groupid, adidList).Delete(&Ad{})
+func DeleteAd(appId string, groupId uint32, adidList []uint32) (uint32, error) {
+	result := DB.Where("app_id = ? AND group_id = ? AND id IN (?)", appId, groupId, adidList).Delete(&Ad{})
 	if result.Error != nil {
 		return 0, result.Error
 	}
-	return  uint32(result.RowsAffected), nil
+	return uint32(result.RowsAffected), nil
 }
 
 // 获取广告投放列表
@@ -129,7 +115,7 @@ func GetAdPlacementList(page, perPage uint32, maps interface{}) ([]Ad, uint32, e
 		total           uint32
 		err             error
 	)
-	record := db.Model(&Ad{}).Where(maps).Where("state = ?", AdStateReleased)
+	record := DB.Model(&Ad{}).Where(maps).Where("state = ?", StateReleased)
 	err = record.Offset(page).Limit(perPage).Find(&adPlacementList).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, 0, err

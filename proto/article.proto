@@ -1,0 +1,183 @@
+// 文章内容模块
+syntax = "proto3";
+package proto;
+
+import "google/api/annotations.proto";
+
+service Article {
+    // 文章
+    rpc MigrateArticle(MigrateArticleRequest) returns (MigrateArticleResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/article/migrate"
+            body: "*"
+        };
+    }
+    rpc AddArticle(AddArticleRequest) returns (AddArticleResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/article/add"
+            body: "*"
+        };
+    }
+    rpc DeleteArticle(DeleteArticleRequest) returns (DeleteArticleResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/article/delete"
+            body: "*"
+        };
+    }
+    rpc GetArticleList(GetArticleListRequest) returns (GetArticleListResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/article/list"
+        };
+    }
+    rpc EditArticle(EditArticleRequest) returns (EditArticleResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/article/edit"
+            body: "*"
+        };
+    }
+    // 专题
+    rpc MigrateArticleTopic(MigrateArticleTopicRequest) returns (MigrateArticleTopicResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/article/topic/migrate"
+            body: "*"
+        };
+    }
+    rpc AddArticleTopic(AddArticleTopicRequest) returns (AddArticleTopicResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/article/topic/add"
+            body: "*"
+        };
+    }
+    rpc GetArticleTopicList(GetArticleTopicListRequest) returns (GetArticleTopicListResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/article/topic/list"
+        };
+    }
+}
+
+message MigrateArticleRequest {}
+
+message MigrateArticleResponse {
+    string message = 1;
+}
+
+// 增
+message AddArticleRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    uint32 topic_id = 3;
+    string cover = 4;
+    string title = 5;
+    string author = 6;
+    string source = 7;
+    uint32 recommendation = 8;
+    string content = 9;
+    uint32 state = 10;
+}
+
+message AddArticleResponse {
+    uint32 article_id = 1;
+}
+
+// 删
+message DeleteArticleRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    repeated uint32 article_id_list = 3;
+}
+
+message DeleteArticleResponse {
+    uint32 rows_affected = 1;
+}
+
+// 查
+message GetArticleListRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    uint32 page = 3;
+    uint32 per_page = 4;
+    uint32 topic_id = 5;
+    string title = 6;
+    string source = 7;
+    uint32 state = 8;
+}
+
+message GetArticleListResponse {
+    repeated ArticleListElement list = 1;
+    uint32 total = 2;
+}
+
+message ArticleListElement {
+    uint32 article_id = 1;
+    uint32 topic_id = 2;
+    string cover = 3;
+    string title = 4;
+    string author = 5;
+    string source = 6;
+    uint32 recommendation = 7;
+    uint32 state = 8;
+    string create_at = 9;
+}
+
+// 改
+message EditArticleRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    uint32 article_id = 3;
+    string name = 4;
+    string title = 5;
+    string description = 6;
+    string remark = 7;
+    string cover = 8;
+    string url = 9;
+    uint32 priority = 10;
+    uint32 display = 11;
+    uint32 state = 12;
+}
+
+message EditArticleResponse {
+    uint32 rows_affected = 1;
+}
+
+// 专题
+// 迁移
+message MigrateArticleTopicRequest {}
+
+message MigrateArticleTopicResponse {
+    string message = 1;
+}
+
+// 查
+message GetArticleTopicListRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    uint32 page = 3;
+    uint32 per_page = 4;
+    uint32 state = 5;
+}
+
+message GetArticleTopicListResponse {
+    repeated ArticleTopicListElement list = 1;
+    uint32 total = 2;
+}
+
+message ArticleTopicListElement {
+    uint32 topic_id = 1;
+    string name = 2;
+    uint32 sort = 3;
+    uint32 state = 4;
+    string create_at = 5;
+}
+
+// 增
+message AddArticleTopicRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    string name = 3;
+    uint32 sort = 4;
+    uint32 state = 5;
+}
+
+message AddArticleTopicResponse {
+    uint32 topic_id = 1;
+}

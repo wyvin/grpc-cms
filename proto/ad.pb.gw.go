@@ -35,6 +35,14 @@ func request_Ad_MigrateAd_0(ctx context.Context, marshaler runtime.Marshaler, cl
 	var protoReq MigrateAdRequest
 	var metadata runtime.ServerMetadata
 
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
 	msg, err := client.MigrateAd(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -43,6 +51,14 @@ func request_Ad_MigrateAd_0(ctx context.Context, marshaler runtime.Marshaler, cl
 func local_request_Ad_MigrateAd_0(ctx context.Context, marshaler runtime.Marshaler, server AdServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq MigrateAdRequest
 	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := server.MigrateAd(ctx, &protoReq)
 	return msg, metadata, err
@@ -222,7 +238,7 @@ func local_request_Ad_GetAdPlacementList_0(ctx context.Context, marshaler runtim
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 func RegisterAdHandlerServer(ctx context.Context, mux *runtime.ServeMux, server AdServer) error {
 
-	mux.Handle("GET", pattern_Ad_MigrateAd_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Ad_MigrateAd_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -383,7 +399,7 @@ func RegisterAdHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.Cl
 // "AdClient" to call the correct interceptors.
 func RegisterAdHandlerClient(ctx context.Context, mux *runtime.ServeMux, client AdClient) error {
 
-	mux.Handle("GET", pattern_Ad_MigrateAd_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Ad_MigrateAd_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)

@@ -1,12 +1,14 @@
 package adDb
 
-import "grpc-content/models"
+import (
+	"grpc-content/models"
+)
 
 type Ad struct {
-	Appid       string
-	Groupid     uint32
-	Adid        uint32
-	AdidList    []uint32
+	AppId       string
+	GroupId     uint32
+	AdId        uint32
+	AdIdList    []uint32
 	Name        string
 	Title       string
 	Description string
@@ -25,16 +27,12 @@ func (a *Ad) Migrate() error {
 	return models.MigrateAd()
 }
 
-func (a *Ad) ExistByName() (bool, error) {
-	return models.ExistAdByName(a.Name)
-}
-
 func (a *Ad) ExistByID() (bool, error) {
-	return models.ExistAdByID(a.Appid, a.Groupid, a.Adid)
+	return models.ExistAdByID(a.AppId, a.GroupId, a.AdId)
 }
 
 func (a *Ad) Insert() (uint32, error) {
-	return models.InsertAd(a.Appid, a.Groupid, a.Name, a.Title, a.Description, a.Remark, a.Cover, a.Url, a.Priority, a.Display, a.State)
+	return models.InsertAd(a.AppId, a.GroupId, a.Name, a.Title, a.Description, a.Remark, a.Cover, a.Url, a.Priority, a.Display, a.State)
 }
 
 func (a *Ad) GetAdList() ([]models.Ad, uint32, error) {
@@ -42,11 +40,11 @@ func (a *Ad) GetAdList() ([]models.Ad, uint32, error) {
 }
 
 func (a *Ad) Edit() (uint32, error) {
-	return models.EditAd(a.Appid, a.Groupid, a.Adid, a.editMaps())
+	return models.EditAd(a.AppId, a.GroupId, a.AdId, a.editMaps())
 }
 
 func (a *Ad) Delete() (uint32, error) {
-	return models.DeleteAd(a.Appid, a.Groupid, a.AdidList)
+	return models.DeleteAd(a.AppId, a.GroupId, a.AdIdList)
 }
 
 func (a *Ad) GetAdPlacementList() ([]models.Ad, uint32, error) {
@@ -55,8 +53,8 @@ func (a *Ad) GetAdPlacementList() ([]models.Ad, uint32, error) {
 
 func (a *Ad) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
-	maps["appid"] = a.Appid
-	maps["groupid"] = a.Groupid
+	maps["app_id"] = a.AppId
+	maps["group_id"] = a.GroupId
 	if a.Display > 0 {
 		maps["display"] = a.Display
 	}
@@ -65,7 +63,6 @@ func (a *Ad) getMaps() map[string]interface{} {
 	}
 	return maps
 }
-
 
 func (a *Ad) editMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
@@ -80,5 +77,3 @@ func (a *Ad) editMaps() map[string]interface{} {
 	maps["state"] = a.State
 	return maps
 }
-
-

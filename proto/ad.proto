@@ -7,7 +7,8 @@ import "google/api/annotations.proto";
 service Ad {
     rpc MigrateAd(MigrateAdRequest) returns (MigrateAdResponse) {
         option (google.api.http) = {
-            get: "/api/v1/ad/migrate"
+            post: "/api/v1/ad/migrate"
+            body: "*"
         };
     }
     rpc AddAd(AddAdRequest) returns (AddAdResponse) {
@@ -48,8 +49,8 @@ message MigrateAdResponse {
 
 // 增
 message AddAdRequest {
-    string appid = 1;
-    uint32 groupid = 2;
+    string app_id = 1;
+    uint32 group_id = 2;
     string name = 3;
     string title = 4;
     string description = 5;
@@ -62,14 +63,14 @@ message AddAdRequest {
 }
 
 message AddAdResponse {
-    uint32 adid = 1;
+    uint32 ad_id = 1;
 }
 
 // 删
 message DeleteAdRequest {
-    string appid = 1;
-    uint32 groupid = 2;
-    repeated uint32 adid_list = 3;
+    string app_id = 1;
+    uint32 group_id = 2;
+    repeated uint32 ad_id_list = 3;
 }
 
 message DeleteAdResponse {
@@ -78,8 +79,8 @@ message DeleteAdResponse {
 
 // 查
 message GetAdListRequest {
-    string appid = 1;
-    uint32 groupid = 2;
+    string app_id = 1;
+    uint32 group_id = 2;
     uint32 page = 3;
     uint32 per_page = 4;
     string name = 5;
@@ -94,7 +95,7 @@ message GetAdListResponse {
 }
 
 message AdListElement {
-    uint32 adid = 1;
+    uint32 ad_id = 1;
     string name = 2;
     string title = 3;
     string description = 4;
@@ -103,14 +104,15 @@ message AdListElement {
     string url = 7;
     uint32 priority = 8;
     uint32 display = 9;
-    string create_at = 10;
+    uint32 State = 10;
+    string create_at = 11;
 }
 
 // 改
 message EditAdRequest {
-    string appid = 1;
-    uint32 groupid = 2;
-    uint32 adid = 3;
+    string app_id = 1;
+    uint32 group_id = 2;
+    uint32 ad_id = 3;
     string name = 4;
     string title = 5;
     string description = 6;
@@ -128,8 +130,8 @@ message EditAdResponse {
 
 // 获取广告投放列表
 message GetAdPlacementListRequest {
-    string appid = 1;
-    uint32 groupid = 2;
+    string app_id = 1;
+    uint32 group_id = 2;
     uint32 page = 3;
     uint32 per_page = 4;
 }
@@ -140,7 +142,7 @@ message GetAdPlacementListResponse {
 }
 
 message AdPlacementListElement {
-    uint32 adid = 1;
+    uint32 ad_id = 1;
     string name = 2;
     string title = 3;
     string description = 4;

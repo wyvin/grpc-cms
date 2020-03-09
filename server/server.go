@@ -55,8 +55,8 @@ func newServer(conn net.Listener, tlsConfig *tls.Config) *http.Server {
 	grpcServer := grpc.NewServer(opts...)
 
 	// register grpc pb
-	pb.RegisterHelloWorldServer(grpcServer, NewHelloService())
 	pb.RegisterAdServer(grpcServer, NewAdService())
+	pb.RegisterArticleServer(grpcServer, NewArticleService())
 
 	// gw server
 	ctx := context.Background()
@@ -69,11 +69,11 @@ func newServer(conn net.Listener, tlsConfig *tls.Config) *http.Server {
 	// gwmux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}))
 
 	// register grpc-gateway pb
-	if err := pb.RegisterHelloWorldHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != nil {
-		log.Printf("Failed to register gw hello server: %v\n", err)
-	}
 	if err := pb.RegisterAdHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != nil {
 		log.Printf("Failed to register gw ad server: %v\n", err)
+	}
+	if err := pb.RegisterArticleHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != nil {
+		log.Printf("Failed to register gw article server: %v\n", err)
 	}
 
 	// http服务

@@ -17,12 +17,12 @@ func NewAdService() *adService {
 	return &adService{}
 }
 
-func checkAppidAndGroupid(appid string, groupid uint32) error {
-	if appid == "" {
-		return status.Error(codes.InvalidArgument, "缺少appid参数")
+func checkAppidAndGroupid(appId string, groupId uint32) error {
+	if appId == "" {
+		return status.Error(codes.InvalidArgument, "缺少app_id参数")
 	}
-	if groupid == 0 {
-		return status.Error(codes.InvalidArgument, "缺少groupid参数")
+	if groupId == 0 {
+		return status.Error(codes.InvalidArgument, "缺少group_id参数")
 	}
 	return nil
 }
@@ -39,13 +39,13 @@ func (a adService) MigrateAd(ctx context.Context, req *pb.MigrateAdRequest) (*pb
 }
 
 func (a adService) AddAd(ctx context.Context, req *pb.AddAdRequest) (*pb.AddAdResponse, error) {
-	if err := checkAppidAndGroupid(req.Appid, req.Groupid); err != nil {
+	if err := checkAppidAndGroupid(req.AppId, req.GroupId); err != nil {
 		return nil, err
 	}
 
 	adExample := adDb.Ad{
-		Appid:       req.Appid,
-		Groupid:     req.Groupid,
+		AppId:       req.AppId,
+		GroupId:     req.GroupId,
 		Name:        req.Name,
 		Title:       req.Title,
 		Description: req.Description,
@@ -57,32 +57,32 @@ func (a adService) AddAd(ctx context.Context, req *pb.AddAdRequest) (*pb.AddAdRe
 		State:       req.State,
 	}
 
-	adid, err := adExample.Insert()
+	adId, err := adExample.Insert()
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.AddAdResponse{
-		Adid: adid,
+		AdId: adId,
 	}, nil
 }
 
 func (a adService) GetAdList(ctx context.Context, req *pb.GetAdListRequest) (*pb.GetAdListResponse, error) {
-	if err := checkAppidAndGroupid(req.Appid, req.Groupid); err != nil {
+	if err := checkAppidAndGroupid(req.AppId, req.GroupId); err != nil {
 		return nil, err
 	}
 
 	util.FormatPageAndPerPage(&req.Page, &req.PerPage)
 
 	adExample := adDb.Ad{
-		Appid:   req.Appid,
-		Groupid: req.Groupid,
+		AppId:   req.AppId,
+		GroupId: req.GroupId,
 		Page:    req.Page,
 		PerPage: req.PerPage,
-		Name: req.Name,
-		Title: req.Title,
+		Name:    req.Name,
+		Title:   req.Title,
 		Display: req.Display,
-		State: req.State,
+		State:   req.State,
 	}
 	record, total, err := adExample.GetAdList()
 	if err != nil {
@@ -93,7 +93,7 @@ func (a adService) GetAdList(ctx context.Context, req *pb.GetAdListRequest) (*pb
 	for i := 0; i < len(record); i++ {
 		ele := record[i]
 		adList[i] = &pb.AdListElement{
-			Adid:        uint32(ele.ID),
+			AdId:        uint32(ele.ID),
 			Name:        ele.Name,
 			Title:       ele.Title,
 			Description: ele.Description,
@@ -102,6 +102,7 @@ func (a adService) GetAdList(ctx context.Context, req *pb.GetAdListRequest) (*pb
 			Url:         ele.Url,
 			Priority:    ele.Priority,
 			Display:     ele.Display,
+			State:       ele.State,
 			CreateAt:    util.FormatDateTime(ele.CreatedAt),
 		}
 	}
@@ -113,16 +114,16 @@ func (a adService) GetAdList(ctx context.Context, req *pb.GetAdListRequest) (*pb
 }
 
 func (a adService) EditAd(ctx context.Context, req *pb.EditAdRequest) (*pb.EditAdResponse, error) {
-	if err := checkAppidAndGroupid(req.Appid, req.Groupid); err != nil {
+	if err := checkAppidAndGroupid(req.AppId, req.GroupId); err != nil {
 		return nil, err
 	}
-	if req.Adid == 0 {
-		return nil, status.Error(codes.InvalidArgument, "缺少adid参数")
+	if req.AdId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "缺少ad_id参数")
 	}
 	adExample := adDb.Ad{
-		Appid:       req.Appid,
-		Groupid:     req.Groupid,
-		Adid:        req.Adid,
+		AppId:       req.AppId,
+		GroupId:     req.GroupId,
+		AdId:        req.AdId,
 		Name:        req.Name,
 		Title:       req.Title,
 		Description: req.Description,
@@ -153,13 +154,13 @@ func (a adService) EditAd(ctx context.Context, req *pb.EditAdRequest) (*pb.EditA
 }
 
 func (a adService) DeleteAd(ctx context.Context, req *pb.DeleteAdRequest) (*pb.DeleteAdResponse, error) {
-	if err := checkAppidAndGroupid(req.Appid, req.Groupid); err != nil {
+	if err := checkAppidAndGroupid(req.AppId, req.GroupId); err != nil {
 		return nil, err
 	}
 	adExample := adDb.Ad{
-		Appid: req.Appid,
-		Groupid: req.Groupid,
-		AdidList: req.AdidList,
+		AppId:    req.AppId,
+		GroupId:  req.GroupId,
+		AdIdList: req.AdIdList,
 	}
 	rowsAffected, err := adExample.Delete()
 	if err != nil {
@@ -172,15 +173,15 @@ func (a adService) DeleteAd(ctx context.Context, req *pb.DeleteAdRequest) (*pb.D
 }
 
 func (a adService) GetAdPlacementList(ctx context.Context, req *pb.GetAdPlacementListRequest) (*pb.GetAdPlacementListResponse, error) {
-	if err := checkAppidAndGroupid(req.Appid, req.Groupid); err != nil {
+	if err := checkAppidAndGroupid(req.AppId, req.GroupId); err != nil {
 		return nil, err
 	}
 
 	util.FormatPageAndPerPage(&req.Page, &req.PerPage)
 
 	adExample := adDb.Ad{
-		Appid:   req.Appid,
-		Groupid: req.Groupid,
+		AppId:   req.AppId,
+		GroupId: req.GroupId,
 		Page:    req.Page,
 		PerPage: req.PerPage,
 	}
@@ -193,7 +194,7 @@ func (a adService) GetAdPlacementList(ctx context.Context, req *pb.GetAdPlacemen
 	for i := 0; i < len(record); i++ {
 		ele := record[i]
 		adPlacementList[i] = &pb.AdPlacementListElement{
-			Adid:        uint32(ele.ID),
+			AdId:        uint32(ele.ID),
 			Name:        ele.Name,
 			Title:       ele.Title,
 			Description: ele.Description,
@@ -210,4 +211,3 @@ func (a adService) GetAdPlacementList(ctx context.Context, req *pb.GetAdPlacemen
 		Total: total,
 	}, nil
 }
-
