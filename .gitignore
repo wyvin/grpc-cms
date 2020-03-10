@@ -14,5 +14,7 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-.idea/
-.DS_Store
+*.idea/
+*.DS_Store
+*.pb.go
+*.pb.gw.go
