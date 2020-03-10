@@ -20,9 +20,9 @@ type Ad struct {
 }
 
 const (
-	StateUnreleased = 1 // 未发布
-	StateReleased   = 2 // 已发布
-	StateCeased     = 3 // 停止/下架
+	AdStateUnreleased = 1 // 未发布
+	AdStateReleased   = 2 // 已发布
+	AdStateCeased     = 3 // 停止/下架
 )
 
 func MigrateAd() error {
@@ -115,7 +115,7 @@ func GetAdPlacementList(page, perPage uint32, maps interface{}) ([]Ad, uint32, e
 		total           uint32
 		err             error
 	)
-	record := DB.Model(&Ad{}).Where(maps).Where("state = ?", StateReleased)
+	record := DB.Model(&Ad{}).Where(maps).Where("state = ?", AdStateReleased)
 	err = record.Offset(page).Limit(perPage).Find(&adPlacementList).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, 0, err

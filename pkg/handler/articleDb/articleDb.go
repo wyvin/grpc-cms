@@ -41,6 +41,10 @@ func (a *Article) GetArticleList() ([]models.Article, uint32, error) {
 	return models.GetArticleList(a.Page, a.PerPage, a.Title, a.Source, a.getMaps())
 }
 
+func (a *Article) Edit() (uint32, error) {
+	return models.EditArticle(a.AppId, a.GroupId, a.AritcleId, a.editMaps())
+}
+
 func (a *Article) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 	maps["app_id"] = a.AppId
@@ -50,6 +54,22 @@ func (a *Article) getMaps() map[string]interface{} {
 	}
 	if a.State > 0 {
 		maps["state"] = a.State
+	}
+	return maps
+}
+
+func (a *Article) editMaps() map[string]interface{} {
+	maps := make(map[string]interface{})
+	maps["topic_id"] = a.TopicId
+	maps["cover"] = a.Cover
+	maps["title"] = a.Title
+	maps["author"] = a.Author
+	maps["source"] = a.Source
+	maps["recommendation"] = a.Recommendation
+	maps["content"] = a.Content
+	maps["state"] = a.State
+	if a.State == models.ArticleStateReleased {
+		maps["released_at"] = time.Now()
 	}
 	return maps
 }

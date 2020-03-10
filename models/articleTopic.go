@@ -41,11 +41,11 @@ func MigrateArticleTopic() error {
 // 插入文章专题
 func InsertArticleTopic(appId string, groupId uint32, name string, sort, state uint32) (uint32, error) {
 	articleTopic := ArticleTopic{
-		AppId:       appId,
-		GroupId:     groupId,
-		Name:        name,
-		Sort:        sort,
-		State:       state,
+		AppId:   appId,
+		GroupId: groupId,
+		Name:    name,
+		Sort:    sort,
+		State:   state,
 	}
 	if err := DB.Create(&articleTopic).Error; err != nil {
 		return 0, err
@@ -58,8 +58,8 @@ func InsertArticleTopic(appId string, groupId uint32, name string, sort, state u
 func GetArticleTopicList(page, perPage uint32, maps interface{}) ([]ArticleTopic, uint32, error) {
 	var (
 		topicList []ArticleTopic
-		total       uint32
-		err         error
+		total     uint32
+		err       error
 	)
 
 	record := DB.Model(&ArticleTopic{}).Where(maps)

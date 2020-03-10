@@ -91,15 +91,22 @@ func (a articleService) GetArticleList(ctx context.Context, req *pb.GetArticleLi
 	list := make([]*pb.ArticleListElement, len(record))
 	for i := 0; i < len(record); i++ {
 		ele := record[i]
+		var releasedAt string
+		if ele.ReleasedAt.IsZero() {
+			releasedAt = ""
+		} else {
+			releasedAt = util.FormatDateTime(ele.ReleasedAt)
+		}
 		list[i] = &pb.ArticleListElement{
 			ArticleId:      uint32(ele.ID),
 			TopicId:        ele.TopicId,
 			Cover:          ele.Cover,
 			Title:          ele.Title,
-			Author:           ele.Author,
+			Author:         ele.Author,
 			Source:         ele.Source,
 			Recommendation: ele.Recommendation,
 			State:          ele.State,
+			ReleasedAt:     releasedAt,
 			CreateAt:       util.FormatDateTime(ele.CreatedAt),
 		}
 	}
@@ -107,6 +114,45 @@ func (a articleService) GetArticleList(ctx context.Context, req *pb.GetArticleLi
 	return &pb.GetArticleListResponse{
 		List:  list,
 		Total: total,
+	}, nil
+}
+
+func (a articleService) EditArticle(ctx context.Context, req *pb.EditArticleRequest) (*pb.RowsAffectedResponse, error) {
+	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
+		return nil, err
+	}
+	if req.ArticleId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "缺少article_id参数")
+	}
+	articleInstance := articleDb.Article{
+		AppId:       req.AppId,
+		GroupId:     req.GroupId,
+		AritcleId:        req.ArticleId,
+		TopicId:        req.TopicId,
+		Cover:       req.Cover,
+		Title:       req.Title,
+		Author: req.Author,
+		Source:      req.Source,
+		Recommendation:         req.Recommendation,
+		Content:    req.Content,
+		State:       req.State,
+	}
+	exists, err := articleInstance.ExistByID()
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, status.Error(codes.NotFound, "记录不存在")
+	}
+
+	var rowsAffected uint32
+	rowsAffected, err = articleInstance.Edit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.RowsAffectedResponse{
+		RowsAffected: rowsAffected,
 	}, nil
 }
 
@@ -128,11 +174,11 @@ func (a articleService) AddArticleTopic(ctx context.Context, req *pb.AddArticleT
 	}
 
 	articleInstance := articleDb.ArticleTopic{
-		AppId:          req.AppId,
-		GroupId:        req.GroupId,
-		Name:          req.Name,
-		Sort:         req.Sort,
-		State:          req.State,
+		AppId:   req.AppId,
+		GroupId: req.GroupId,
+		Name:    req.Name,
+		Sort:    req.Sort,
+		State:   req.State,
 	}
 	var err error
 	exists, err := articleInstance.ExistByName()
@@ -176,11 +222,11 @@ func (a articleService) GetArticleTopicList(ctx context.Context, req *pb.GetArti
 	for i := 0; i < len(record); i++ {
 		ele := record[i]
 		list[i] = &pb.ArticleTopicListElement{
-			TopicId:      uint32(ele.ID),
-			Name:          ele.Name,
-			Sort:           ele.Sort,
-			State:          ele.State,
-			CreateAt:       util.FormatDateTime(ele.CreatedAt),
+			TopicId:  uint32(ele.ID),
+			Name:     ele.Name,
+			Sort:     ele.Sort,
+			State:    ele.State,
+			CreateAt: util.FormatDateTime(ele.CreatedAt),
 		}
 	}
 

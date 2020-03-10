@@ -18,7 +18,7 @@ service Article {
             body: "*"
         };
     }
-    rpc DeleteArticle(DeleteArticleRequest) returns (DeleteArticleResponse) {
+    rpc DeleteArticle(DeleteArticleRequest) returns (RowsAffectedResponse) {
         option (google.api.http) = {
             post: "/api/v1/article/delete"
             body: "*"
@@ -29,7 +29,7 @@ service Article {
             get: "/api/v1/article/list"
         };
     }
-    rpc EditArticle(EditArticleRequest) returns (EditArticleResponse) {
+    rpc EditArticle(EditArticleRequest) returns (RowsAffectedResponse) {
         option (google.api.http) = {
             post: "/api/v1/article/edit"
             body: "*"
@@ -55,6 +55,12 @@ service Article {
     }
 }
 
+// command
+message RowsAffectedResponse {
+    uint32 rows_affected = 1;
+}
+
+// 迁移
 message MigrateArticleRequest {}
 
 message MigrateArticleResponse {
@@ -86,10 +92,6 @@ message DeleteArticleRequest {
     repeated uint32 article_id_list = 3;
 }
 
-message DeleteArticleResponse {
-    uint32 rows_affected = 1;
-}
-
 // 查
 message GetArticleListRequest {
     string app_id = 1;
@@ -116,7 +118,8 @@ message ArticleListElement {
     string source = 6;
     uint32 recommendation = 7;
     uint32 state = 8;
-    string create_at = 9;
+    string released_at = 9;
+    string create_at = 10;
 }
 
 // 改
@@ -124,19 +127,14 @@ message EditArticleRequest {
     string app_id = 1;
     uint32 group_id = 2;
     uint32 article_id = 3;
-    string name = 4;
-    string title = 5;
-    string description = 6;
-    string remark = 7;
-    string cover = 8;
-    string url = 9;
-    uint32 priority = 10;
-    uint32 display = 11;
-    uint32 state = 12;
-}
-
-message EditArticleResponse {
-    uint32 rows_affected = 1;
+    uint32 topic_id = 4;
+    string cover = 5;
+    string title = 6;
+    string author = 7;
+    string source = 8;
+    uint32 recommendation = 9;
+    string content = 10;
+    uint32 state = 11;
 }
 
 // 专题

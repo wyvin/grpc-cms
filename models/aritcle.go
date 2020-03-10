@@ -16,14 +16,14 @@ type Article struct {
 	Source         string    `gorm:"type:varchar(128);NOT NULL;default:'';comment:'来源'"`
 	Recommendation uint32    `gorm:"NOT NULL;default:0;comment:'推荐度'"`
 	Content        string    `gorm:"type:text;NOT NULL;comment:'内容/正文'"`
-	ReleasedAt     time.Time `gorm:"NOT NULL;comment:'发布时间'"`
+	ReleasedAt     time.Time `gorm:"default:NULL;comment:'发布时间'"`
 	State          uint32    `gorm:"NOT NULL;default:1;comment:'状态 1草稿 2已发布 3下架'"`
 }
 
 const (
-	AdStateDraft    = 1 // 草稿
-	AdStateReleased = 2 // 已发布
-	AdStateCeased   = 3 // 下架
+	ArticleStateDraft    = 1 // 草稿
+	ArticleStateReleased = 2 // 已发布
+	ArticleStateCeased   = 3 // 下架
 )
 
 func MigrateArticle() error {
@@ -47,6 +47,10 @@ func ExistArticleByID(appId string, groupId, articleId uint32) (bool, error) {
 
 // 插入文章
 func InsertArticle(appId string, groupId, topicId uint32, cover, title, author string, source string, recommendation uint32, content string, state uint32) (uint32, error) {
+	var releasedAt time.Time
+	if state == ArticleStateReleased {
+		releasedAt = time.Now()
+	}
 	article := Article{
 		AppId:          appId,
 		GroupId:        groupId,
@@ -57,6 +61,7 @@ func InsertArticle(appId string, groupId, topicId uint32, cover, title, author s
 		Source:         source,
 		Recommendation: recommendation,
 		Content:        content,
+		ReleasedAt:     releasedAt,
 		State:          state,
 	}
 	if err := DB.Create(&article).Error; err != nil {
@@ -88,4 +93,13 @@ func GetArticleList(page, perPage uint32, title, source string, maps interface{}
 	record.Count(&total)
 
 	return articleList, total, nil
+}
+
+// 编辑文章
+func EditArticle(appId string, groupId, articleId uint32, data interface{}) (uint32, error) {
+	result := DB.Model(&Article{}).Where("app_id = ? AND group_id = ? AND id = ?", appId, groupId, articleId).Updates(data)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return uint32(result.RowsAffected), nil
 }
