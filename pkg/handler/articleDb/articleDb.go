@@ -41,6 +41,10 @@ func (a *Article) GetArticleList() ([]models.Article, uint32, error) {
 	return models.GetArticleList(a.Page, a.PerPage, a.Title, a.Source, a.getMaps())
 }
 
+func (a *Article) GetArticleDetail() (*models.Article, error) {
+	return models.GetArticleDetail(a.AritcleId, a.getMaps())
+}
+
 func (a *Article) Edit() (uint32, error) {
 	return models.EditArticle(a.AppId, a.GroupId, a.AritcleId, a.editMaps())
 }

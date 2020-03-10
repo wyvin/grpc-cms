@@ -29,6 +29,11 @@ service Article {
             get: "/api/v1/article/list"
         };
     }
+    rpc GetArticleDetail(GetArticleDetailRequest) returns (GetArticleDetailResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/article/detail"
+        };
+    }
     rpc EditArticle(EditArticleRequest) returns (RowsAffectedResponse) {
         option (google.api.http) = {
             post: "/api/v1/article/edit"
@@ -119,7 +124,28 @@ message ArticleListElement {
     uint32 recommendation = 7;
     uint32 state = 8;
     string released_at = 9;
-    string create_at = 10;
+    string created_at = 10;
+}
+
+message GetArticleDetailRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    uint32 article_id = 3;
+}
+
+message GetArticleDetailResponse {
+    uint32 article_id = 1;
+    uint32 topic_id = 2;
+    string cover = 3;
+    string title = 4;
+    string author = 5;
+    string source = 6;
+    uint32 recommendation = 7;
+    string content = 8;
+    string released_at = 9;
+    uint32 state = 10;
+    string updated_at = 11;
+    string created_at = 12;
 }
 
 // 改
@@ -164,7 +190,7 @@ message ArticleTopicListElement {
     string name = 2;
     uint32 sort = 3;
     uint32 state = 4;
-    string create_at = 5;
+    string created_at = 5;
 }
 
 // 增

@@ -107,7 +107,7 @@ func (a articleService) GetArticleList(ctx context.Context, req *pb.GetArticleLi
 			Recommendation: ele.Recommendation,
 			State:          ele.State,
 			ReleasedAt:     releasedAt,
-			CreateAt:       util.FormatDateTime(ele.CreatedAt),
+			CreatedAt:       util.FormatDateTime(ele.CreatedAt),
 		}
 	}
 
@@ -153,6 +153,51 @@ func (a articleService) EditArticle(ctx context.Context, req *pb.EditArticleRequ
 
 	return &pb.RowsAffectedResponse{
 		RowsAffected: rowsAffected,
+	}, nil
+}
+
+func (a articleService) GetArticleDetail (ctx context.Context, req *pb.GetArticleDetailRequest) (*pb.GetArticleDetailResponse, error) {
+	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
+		return nil, err
+	}
+	articleInstance := articleDb.Article{
+		AppId:     req.AppId,
+		GroupId:   req.GroupId,
+		AritcleId: req.ArticleId,
+	}
+	exists, err := articleInstance.ExistByID()
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, status.Error(codes.NotFound, "记录不存在")
+	}
+
+	article, err := articleInstance.GetArticleDetail()
+	if err != nil {
+		return nil, err
+	}
+
+	var releasedAt string
+	if article.ReleasedAt.IsZero() {
+		releasedAt = ""
+	} else {
+		releasedAt = util.FormatDateTime(article.ReleasedAt)
+	}
+
+	return &pb.GetArticleDetailResponse{
+		ArticleId:            uint32(article.ID),
+		TopicId:              article.TopicId,
+		Cover:                article.Cover,
+		Title:                article.Title,
+		Author:               article.Author,
+		Source:               article.Source,
+		Recommendation:       article.Recommendation,
+		Content:              article.Content,
+		ReleasedAt:           releasedAt,
+		State:                article.State,
+		UpdatedAt:            util.FormatDateTime(article.UpdatedAt),
+		CreatedAt:            util.FormatDateTime(article.CreatedAt),
 	}, nil
 }
 
@@ -226,7 +271,7 @@ func (a articleService) GetArticleTopicList(ctx context.Context, req *pb.GetArti
 			Name:     ele.Name,
 			Sort:     ele.Sort,
 			State:    ele.State,
-			CreateAt: util.FormatDateTime(ele.CreatedAt),
+			CreatedAt: util.FormatDateTime(ele.CreatedAt),
 		}
 	}
 

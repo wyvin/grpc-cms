@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
+	"log"
 	"time"
 )
 
@@ -35,7 +36,7 @@ func MigrateArticle() error {
 
 func ExistArticleByID(appId string, groupId, articleId uint32) (bool, error) {
 	var article Article
-	err := DB.Select("id").Where("app_id = ? AND group_id = ? AND id = ?", appId, groupId, articleId).First(&article).Error
+	err := DB.Select("id").Where("app_id = ? AND group_id = ?", appId, groupId).First(&article, articleId).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -93,6 +94,23 @@ func GetArticleList(page, perPage uint32, title, source string, maps interface{}
 	record.Count(&total)
 
 	return articleList, total, nil
+}
+
+// 获取文章详情
+func GetArticleDetail(articleId uint32, maps interface{}) (*Article, error) {
+	var (
+		article Article
+		err     error
+	)
+
+	record := DB.Where(maps)
+	record.Joins("JOIN article_topic ON article.topic_id = article_topic.id").First(&article, articleId)
+	err = record.Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+    log.Println(&article)
+	return &article, nil
 }
 
 // 编辑文章

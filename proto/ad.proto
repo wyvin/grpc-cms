@@ -105,7 +105,7 @@ message AdListElement {
     uint32 priority = 8;
     uint32 display = 9;
     uint32 State = 10;
-    string create_at = 11;
+    string created_at = 11;
 }
 
 // 改
