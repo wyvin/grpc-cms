@@ -49,6 +49,10 @@ func (a *Article) Edit() (uint32, error) {
 	return models.EditArticle(a.AppId, a.GroupId, a.AritcleId, a.editMaps())
 }
 
+func (a *Article) Delete() (uint32, error) {
+	return models.DeleteArticle(a.AppId, a.GroupId, a.ArticleIdList)
+}
+
 func (a *Article) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 	maps["app_id"] = a.AppId

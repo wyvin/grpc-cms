@@ -116,7 +116,7 @@ func GetAdPlacementList(page, perPage uint32, maps interface{}) ([]Ad, uint32, e
 		err             error
 	)
 	record := DB.Model(&Ad{}).Where(maps).Where("state = ?", AdStateReleased)
-	err = record.Offset(page).Limit(perPage).Find(&adPlacementList).Error
+	err = record.Offset(page).Limit(perPage).Order("priority desc").Find(&adPlacementList).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, 0, err
 	}

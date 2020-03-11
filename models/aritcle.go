@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"log"
 	"time"
 )
 
@@ -103,19 +102,26 @@ func GetArticleDetail(articleId uint32, maps interface{}) (*Article, error) {
 		err     error
 	)
 
-	record := DB.Where(maps)
-	record.Joins("JOIN article_topic ON article.topic_id = article_topic.id").First(&article, articleId)
+	record := DB.Where(maps).First(&article, articleId)
 	err = record.Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
-    log.Println(&article)
 	return &article, nil
 }
 
 // 编辑文章
 func EditArticle(appId string, groupId, articleId uint32, data interface{}) (uint32, error) {
 	result := DB.Model(&Article{}).Where("app_id = ? AND group_id = ? AND id = ?", appId, groupId, articleId).Updates(data)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return uint32(result.RowsAffected), nil
+}
+
+// 批量删除文章
+func DeleteArticle(appId string, groupId uint32, articleIdList []uint32) (uint32, error) {
+	result := DB.Where("app_id = ? AND group_id = ? AND id IN (?)", appId, groupId, articleIdList).Delete(&Article{})
 	if result.Error != nil {
 		return 0, result.Error
 	}

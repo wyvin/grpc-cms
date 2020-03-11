@@ -6,12 +6,11 @@ import (
 
 type ArticleTopic struct {
 	gorm.Model
-	AppId    string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'应用ID'"`
-	GroupId  uint32 `gorm:"NOT NULL;default:0;comment:'用户组ID'"`
-	Name     string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'专题名称'"`
-	Sort     uint32 `gorm:"NOT NULL;default:0;comment:'排序'"`
-	State    uint32 `gorm:"NOT NULL;default:1;comment:'状态 1已发布 2停用'"`
-	Articles []Article
+	AppId   string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'应用ID'"`
+	GroupId uint32 `gorm:"NOT NULL;default:0;comment:'用户组ID'"`
+	Name    string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'专题名称'"`
+	Sort    uint32 `gorm:"NOT NULL;default:0;comment:'排序'"`
+	State   uint32 `gorm:"NOT NULL;default:1;comment:'状态 1已发布 2停用'"`
 }
 
 const (

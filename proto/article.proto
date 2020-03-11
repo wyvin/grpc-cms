@@ -53,11 +53,6 @@ service Article {
             body: "*"
         };
     }
-    rpc GetArticleTopicList(GetArticleTopicListRequest) returns (GetArticleTopicListResponse) {
-        option (google.api.http) = {
-            get: "/api/v1/article/topic/list"
-        };
-    }
 }
 
 // command

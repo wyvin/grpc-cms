@@ -107,7 +107,7 @@ func (a articleService) GetArticleList(ctx context.Context, req *pb.GetArticleLi
 			Recommendation: ele.Recommendation,
 			State:          ele.State,
 			ReleasedAt:     releasedAt,
-			CreatedAt:       util.FormatDateTime(ele.CreatedAt),
+			CreatedAt:      util.FormatDateTime(ele.CreatedAt),
 		}
 	}
 
@@ -125,17 +125,17 @@ func (a articleService) EditArticle(ctx context.Context, req *pb.EditArticleRequ
 		return nil, status.Error(codes.InvalidArgument, "缺少article_id参数")
 	}
 	articleInstance := articleDb.Article{
-		AppId:       req.AppId,
-		GroupId:     req.GroupId,
-		AritcleId:        req.ArticleId,
+		AppId:          req.AppId,
+		GroupId:        req.GroupId,
+		AritcleId:      req.ArticleId,
 		TopicId:        req.TopicId,
-		Cover:       req.Cover,
-		Title:       req.Title,
-		Author: req.Author,
-		Source:      req.Source,
-		Recommendation:         req.Recommendation,
-		Content:    req.Content,
-		State:       req.State,
+		Cover:          req.Cover,
+		Title:          req.Title,
+		Author:         req.Author,
+		Source:         req.Source,
+		Recommendation: req.Recommendation,
+		Content:        req.Content,
+		State:          req.State,
 	}
 	exists, err := articleInstance.ExistByID()
 	if err != nil {
@@ -156,7 +156,7 @@ func (a articleService) EditArticle(ctx context.Context, req *pb.EditArticleRequ
 	}, nil
 }
 
-func (a articleService) GetArticleDetail (ctx context.Context, req *pb.GetArticleDetailRequest) (*pb.GetArticleDetailResponse, error) {
+func (a articleService) GetArticleDetail(ctx context.Context, req *pb.GetArticleDetailRequest) (*pb.GetArticleDetailResponse, error) {
 	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
 		return nil, err
 	}
@@ -165,17 +165,13 @@ func (a articleService) GetArticleDetail (ctx context.Context, req *pb.GetArticl
 		GroupId:   req.GroupId,
 		AritcleId: req.ArticleId,
 	}
-	exists, err := articleInstance.ExistByID()
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, status.Error(codes.NotFound, "记录不存在")
-	}
 
 	article, err := articleInstance.GetArticleDetail()
 	if err != nil {
 		return nil, err
+	}
+	if article.ID == 0 {
+		return nil, status.Error(codes.NotFound, "记录不存在")
 	}
 
 	var releasedAt string
@@ -186,18 +182,37 @@ func (a articleService) GetArticleDetail (ctx context.Context, req *pb.GetArticl
 	}
 
 	return &pb.GetArticleDetailResponse{
-		ArticleId:            uint32(article.ID),
-		TopicId:              article.TopicId,
-		Cover:                article.Cover,
-		Title:                article.Title,
-		Author:               article.Author,
-		Source:               article.Source,
-		Recommendation:       article.Recommendation,
-		Content:              article.Content,
-		ReleasedAt:           releasedAt,
-		State:                article.State,
-		UpdatedAt:            util.FormatDateTime(article.UpdatedAt),
-		CreatedAt:            util.FormatDateTime(article.CreatedAt),
+		ArticleId:      uint32(article.ID),
+		TopicId:        article.TopicId,
+		Cover:          article.Cover,
+		Title:          article.Title,
+		Author:         article.Author,
+		Source:         article.Source,
+		Recommendation: article.Recommendation,
+		Content:        article.Content,
+		ReleasedAt:     releasedAt,
+		State:          article.State,
+		UpdatedAt:      util.FormatDateTime(article.UpdatedAt),
+		CreatedAt:      util.FormatDateTime(article.CreatedAt),
+	}, nil
+}
+
+func (a articleService) DeleteArticle(ctx context.Context, req *pb.DeleteArticleRequest) (*pb.RowsAffectedResponse, error) {
+	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
+		return nil, err
+	}
+	articleInstance := articleDb.Article{
+		AppId:         req.AppId,
+		GroupId:       req.GroupId,
+		ArticleIdList: req.ArticleIdList,
+	}
+	rowsAffected, err := articleInstance.Delete()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.RowsAffectedResponse{
+		RowsAffected: rowsAffected,
 	}, nil
 }
 
@@ -267,10 +282,10 @@ func (a articleService) GetArticleTopicList(ctx context.Context, req *pb.GetArti
 	for i := 0; i < len(record); i++ {
 		ele := record[i]
 		list[i] = &pb.ArticleTopicListElement{
-			TopicId:  uint32(ele.ID),
-			Name:     ele.Name,
-			Sort:     ele.Sort,
-			State:    ele.State,
+			TopicId:   uint32(ele.ID),
+			Name:      ele.Name,
+			Sort:      ele.Sort,
+			State:     ele.State,
 			CreatedAt: util.FormatDateTime(ele.CreatedAt),
 		}
 	}

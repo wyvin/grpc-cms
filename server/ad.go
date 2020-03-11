@@ -103,7 +103,7 @@ func (a adService) GetAdList(ctx context.Context, req *pb.GetAdListRequest) (*pb
 			Priority:    ele.Priority,
 			Display:     ele.Display,
 			State:       ele.State,
-			CreatedAt:    util.FormatDateTime(ele.CreatedAt),
+			CreatedAt:   util.FormatDateTime(ele.CreatedAt),
 		}
 	}
 
