@@ -79,3 +79,21 @@ func EditArticleTopic(appId string, groupId, topicId uint32, data interface{}) (
 	}
 	return uint32(result.RowsAffected), nil
 }
+
+// 批量删除专题
+func DeleteArticleTopic(appId string, groupId uint32, topicIdList []uint32) (uint32, error) {
+	tx := DB.Begin()
+	result := tx.Where("app_id = ? AND group_id = ? AND id IN (?)", appId, groupId, topicIdList).Delete(&ArticleTopic{})
+	if result.Error != nil {
+		tx.Rollback()
+		return 0, result.Error
+	}
+	// 将文章中的专题ID至为0
+	err := tx.Model(&Article{}).Where("app_id = ? AND group_id = ? AND topic_id IN (?)", appId, groupId, topicIdList).Update("topic_id", 0).Error
+	if err != nil {
+		tx.Rollback()
+		return 0, nil
+	}
+	tx.Commit()
+	return uint32(result.RowsAffected), nil
+}

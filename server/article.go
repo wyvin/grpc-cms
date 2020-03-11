@@ -320,3 +320,22 @@ func (a articleService) EditArticleTopic(ctx context.Context, req *pb.EditArticl
 		RowsAffected: rowsAffected,
 	}, nil
 }
+
+func (a articleService) DeleteArticleTopic(ctx context.Context, req *pb.DeleteArticleTopicRequest) (*pb.RowsAffectedResponse, error) {
+	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
+		return nil, err
+	}
+	topicInstance := articleDb.ArticleTopic{
+		AppId:         req.AppId,
+		GroupId:       req.GroupId,
+		TopicIdList: req.TopicIdList,
+	}
+	rowsAffected, err := topicInstance.Delete()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.RowsAffectedResponse{
+		RowsAffected: rowsAffected,
+	}, nil
+}

@@ -12,6 +12,7 @@ type ArticleTopic struct {
 	Sort    uint32
 	State   uint32
 
+	TopicIdList []uint32
 	Page    uint32
 	PerPage uint32
 }
@@ -34,6 +35,10 @@ func (a *ArticleTopic) GetTopicList() ([]models.ArticleTopic, uint32, error) {
 
 func (a *ArticleTopic) Edit() (uint32, error) {
 	return models.EditArticleTopic(a.AppId, a.GroupId, a.TopicId, a.editMaps())
+}
+
+func (a *ArticleTopic) Delete() (uint32, error) {
+	return models.DeleteArticleTopic(a.AppId, a.GroupId, a.TopicIdList)
 }
 
 func (a *ArticleTopic) getMaps() map[string]interface{} {

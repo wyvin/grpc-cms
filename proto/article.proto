@@ -64,6 +64,12 @@ service Article {
             body: "*"
         };
     }
+    rpc DeleteArticleTopic(DeleteArticleTopicRequest) returns (RowsAffectedResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/article/topic/delete"
+            body: "*"
+        };
+    }
 }
 
 // command
@@ -220,4 +226,11 @@ message EditArticleTopicRequest {
     string name = 4;
     uint32 sort = 5;
     uint32 state = 6;
+}
+
+// 删
+message DeleteArticleTopicRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    repeated uint32 topic_id_list = 3;
 }
