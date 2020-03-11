@@ -9,7 +9,7 @@ type ArticleTopic struct {
 	AppId   string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'应用ID'"`
 	GroupId uint32 `gorm:"NOT NULL;default:0;comment:'用户组ID'"`
 	Name    string `gorm:"type:varchar(64);NOT NULL;default:'';comment:'专题名称'"`
-	Sort    uint32 `gorm:"NOT NULL;default:0;comment:'排序'"`
+	Sort    uint32 `gorm:"NOT NULL;default:1;comment:'排序'"`
 	State   uint32 `gorm:"NOT NULL;default:1;comment:'状态 1已发布 2停用'"`
 }
 
@@ -18,9 +18,9 @@ const (
 	ArticleTopicStateCease    = 2 // 停用
 )
 
-func ExistArticleTopicByName(appId string, groupId uint32, name string) (bool, error) {
+func ExistArticleTopicByID(appId string, groupId, topicId uint32) (bool, error) {
 	var topic ArticleTopic
-	err := DB.Select("id").Where("app_id = ? AND group_id = ? AND name = ?", appId, groupId, name).First(&topic).Error
+	err := DB.Select("id").Where("app_id = ? AND group_id = ?", appId, groupId).First(&topic, topicId).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -69,4 +69,13 @@ func GetArticleTopicList(page, perPage uint32, maps interface{}) ([]ArticleTopic
 	record.Count(&total)
 
 	return topicList, total, nil
+}
+
+// 编辑专题
+func EditArticleTopic(appId string, groupId, topicId uint32, data interface{}) (uint32, error) {
+	result := DB.Model(&ArticleTopic{}).Where("app_id = ? AND group_id = ? AND id = ?", appId, groupId, topicId).Updates(data)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return uint32(result.RowsAffected), nil
 }

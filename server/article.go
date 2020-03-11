@@ -240,15 +240,6 @@ func (a articleService) AddArticleTopic(ctx context.Context, req *pb.AddArticleT
 		Sort:    req.Sort,
 		State:   req.State,
 	}
-	var err error
-	exists, err := articleInstance.ExistByName()
-	if err != nil {
-		return nil, err
-	}
-	if exists {
-		return nil, status.Error(codes.AlreadyExists, "专题名已存在")
-	}
-
 	topicId, err := articleInstance.Insert()
 	if err != nil {
 		return nil, err
@@ -293,5 +284,39 @@ func (a articleService) GetArticleTopicList(ctx context.Context, req *pb.GetArti
 	return &pb.GetArticleTopicListResponse{
 		List:  list,
 		Total: total,
+	}, nil
+}
+
+func (a articleService) EditArticleTopic(ctx context.Context, req *pb.EditArticleTopicRequest) (*pb.RowsAffectedResponse, error) {
+	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
+		return nil, err
+	}
+	if req.TopicId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "缺少topic_id参数")
+	}
+	topicInstance := articleDb.ArticleTopic{
+		AppId:         req.AppId,
+		GroupId:       req.GroupId,
+		TopicId: req.TopicId,
+		Name: req.Name,
+		Sort: req.Sort,
+		State: req.State,
+	}
+	exists, err := topicInstance.ExistByID()
+	if err != nil {
+		return  nil, err
+	}
+	if !exists {
+		return nil, status.Error(codes.NotFound, "记录不存在")
+	}
+
+	var rowsAffected uint32
+	rowsAffected, err = topicInstance.Edit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.RowsAffectedResponse{
+		RowsAffected: rowsAffected,
 	}, nil
 }

@@ -53,6 +53,17 @@ service Article {
             body: "*"
         };
     }
+    rpc GetArticleTopicList(GetArticleTopicListRequest) returns (GetArticleTopicListResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/article/topic/list"
+        };
+    }
+    rpc EditArticleTopic(EditArticleTopicRequest) returns (RowsAffectedResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/article/topic/edit"
+            body: "*"
+        };
+    }
 }
 
 // command
@@ -199,4 +210,14 @@ message AddArticleTopicRequest {
 
 message AddArticleTopicResponse {
     uint32 topic_id = 1;
+}
+
+// 改
+message EditArticleTopicRequest {
+    string app_id = 1;
+    uint32 group_id = 2;
+    uint32 topic_id = 3;
+    string name = 4;
+    uint32 sort = 5;
+    uint32 state = 6;
 }

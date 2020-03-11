@@ -72,8 +72,14 @@ func (a *Ad) editMaps() map[string]interface{} {
 	maps["remark"] = a.Remark
 	maps["cover"] = a.Cover
 	maps["url"] = a.Url
-	maps["priority"] = a.Priority
-	maps["display"] = a.Display
-	maps["state"] = a.State
+	if a.Priority > 0 {
+		maps["priority"] = a.Priority
+	}
+	if a.Display > 0 {
+		maps["display"] = a.Display
+	}
+	if a.State > 0 {
+		maps["state"] = a.State
+	}
 	return maps
 }

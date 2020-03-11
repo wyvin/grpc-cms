@@ -16,8 +16,8 @@ type ArticleTopic struct {
 	PerPage uint32
 }
 
-func (a *ArticleTopic) ExistByName() (bool, error) {
-	return models.ExistArticleTopicByName(a.AppId, a.GroupId, a.Name)
+func (a *ArticleTopic) ExistByID() (bool, error) {
+	return models.ExistArticleTopicByID(a.AppId, a.GroupId, a.TopicId)
 }
 
 func (a *ArticleTopic) Migrate() error {
@@ -32,10 +32,26 @@ func (a *ArticleTopic) GetTopicList() ([]models.ArticleTopic, uint32, error) {
 	return models.GetArticleTopicList(a.Page, a.PerPage, a.getMaps())
 }
 
+func (a *ArticleTopic) Edit() (uint32, error) {
+	return models.EditArticleTopic(a.AppId, a.GroupId, a.TopicId, a.editMaps())
+}
+
 func (a *ArticleTopic) getMaps() map[string]interface{} {
 	maps := make(map[string]interface{})
 	maps["app_id"] = a.AppId
 	maps["group_id"] = a.GroupId
+	if a.State > 0 {
+		maps["state"] = a.State
+	}
+	return maps
+}
+
+func (a *ArticleTopic) editMaps() map[string]interface{} {
+	maps := make(map[string]interface{})
+	maps["name"] = a.Name
+	if a.Sort > 0 {
+		maps["sort"] = a.Sort
+	}
 	if a.State > 0 {
 		maps["state"] = a.State
 	}

@@ -75,7 +75,9 @@ func (a *Article) editMaps() map[string]interface{} {
 	maps["source"] = a.Source
 	maps["recommendation"] = a.Recommendation
 	maps["content"] = a.Content
-	maps["state"] = a.State
+	if a.State > 0 {
+		maps["state"] = a.State
+	}
 	if a.State == models.ArticleStateReleased {
 		maps["released_at"] = time.Now()
 	}
