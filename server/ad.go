@@ -4,9 +4,9 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"grpc-content/pkg/handler/adDb"
-	"grpc-content/pkg/util"
-	pb "grpc-content/proto"
+	"grpc-cms/pkg/handler/adDb"
+	"grpc-cms/pkg/util"
+	pb "grpc-cms/proto"
 )
 
 type adService struct {

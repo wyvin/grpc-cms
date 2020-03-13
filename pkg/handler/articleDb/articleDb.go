@@ -1,7 +1,7 @@
 package articleDb
 
 import (
-	"grpc-content/models"
+	"grpc-cms/models"
 	"time"
 )
 

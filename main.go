@@ -1,8 +1,8 @@
 package main
 
 import (
-	"grpc-content/cmd"
-	"grpc-content/models"
+	"grpc-cms/cmd"
+	"grpc-cms/models"
 )
 
 func init() {

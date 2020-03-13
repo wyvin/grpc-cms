@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"grpc-content/conf"
+	"grpc-cms/conf"
 	"log"
 )
 

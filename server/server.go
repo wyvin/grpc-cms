@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	"grpc-content/pkg/util"
-	pb "grpc-content/proto"
+	"grpc-cms/pkg/util"
+	pb "grpc-cms/proto"
 )
 
 var (

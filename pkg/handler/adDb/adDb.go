@@ -1,7 +1,7 @@
 package adDb
 
 import (
-	"grpc-content/models"
+	"grpc-cms/models"
 )
 
 type Ad struct {

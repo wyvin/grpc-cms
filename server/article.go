@@ -4,9 +4,9 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"grpc-content/pkg/handler/articleDb"
-	"grpc-content/pkg/util"
-	pb "grpc-content/proto"
+	"grpc-cms/pkg/handler/articleDb"
+	"grpc-cms/pkg/util"
+	pb "grpc-cms/proto"
 )
 
 type articleService struct {
