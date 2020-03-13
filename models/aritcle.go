@@ -127,3 +127,27 @@ func DeleteArticle(appId string, groupId uint32, articleIdList []uint32) (uint32
 	}
 	return uint32(result.RowsAffected), nil
 }
+
+// 获取文章投放列表
+func GetArticlePlacementList(page, perPage uint32, title, source string, maps interface{}) ([]Article, uint32, error) {
+	var (
+		articleList []Article
+		total       uint32
+		err         error
+	)
+
+	record := DB.Model(&Article{}).Where(maps).Where("state = ?", ArticleStateReleased)
+	if title != "" {
+		record = record.Where("title LIKE ?", "%"+title+"%")
+	}
+	if source != "" {
+		record = record.Where("source LIKE ?", "%"+source+"%")
+	}
+	err = record.Offset(page).Limit(perPage).Order("Recommendation desc").Find(&articleList).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, 0, err
+	}
+	record.Count(&total)
+
+	return articleList, total, nil
+}

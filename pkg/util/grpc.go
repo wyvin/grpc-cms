@@ -1,7 +1,10 @@
 package util
 
 import (
+	"bytes"
 	"google.golang.org/grpc"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -22,6 +25,13 @@ func GrpcHandlerFunc(grpcServer *grpc.Server, otherHandler http.Handler) http.Ha
 		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
 			grpcServer.ServeHTTP(w, r)
 		} else {
+			log.Println(r.Method, r.Host, r.URL.String(), r.UserAgent())
+			if r.Method == "POST" {
+				body, _ := ioutil.ReadAll(r.Body)
+				log.Printf("%s", body)
+				// 将字节切片内容写入相应报文
+				r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+			}
 			otherHandler.ServeHTTP(w, r)
 		}
 	})

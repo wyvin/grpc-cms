@@ -7,36 +7,36 @@ import "google/api/annotations.proto";
 service Ad {
     rpc MigrateAd(MigrateAdRequest) returns (MigrateAdResponse) {
         option (google.api.http) = {
-            post: "/api/v1/ad/migrate"
+            post: "/v1/ad/migrate"
             body: "*"
         };
     }
     rpc AddAd(AddAdRequest) returns (AddAdResponse) {
         option (google.api.http) = {
-            post: "/api/v1/ad/add"
+            post: "/v1/ad/add"
             body: "*"
         };
     }
     rpc DeleteAd(DeleteAdRequest) returns (DeleteAdResponse) {
         option (google.api.http) = {
-            post: "/api/v1/ad/delete"
+            post: "/v1/ad/delete"
             body: "*"
         };
     }
     rpc GetAdList(GetAdListRequest) returns (GetAdListResponse) {
         option (google.api.http) = {
-            get: "/api/v1/ad/list"
+            get: "/v1/ad/list"
         };
     }
     rpc EditAd(EditAdRequest) returns (EditAdResponse) {
         option (google.api.http) = {
-            post: "/api/v1/ad/edit"
+            post: "/v1/ad/edit"
             body: "*"
         };
     }
     rpc GetAdPlacementList(GetAdPlacementListRequest) returns (GetAdPlacementListResponse) {
         option (google.api.http) = {
-            get: "/api/v1/ad/placement_list"
+            get: "/v1/ad/placement_list"
         };
     }
 }

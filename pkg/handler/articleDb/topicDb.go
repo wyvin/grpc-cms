@@ -33,6 +33,10 @@ func (a *ArticleTopic) GetTopicList() ([]models.ArticleTopic, uint32, error) {
 	return models.GetArticleTopicList(a.Page, a.PerPage, a.getMaps())
 }
 
+func (a *ArticleTopic) GetTopicPlacementList() ([]models.ArticleTopic, uint32, error) {
+	return models.GetArticleTopicPlacementList(a.Page, a.PerPage, a.getMaps())
+}
+
 func (a *ArticleTopic) Edit() (uint32, error) {
 	return models.EditArticleTopic(a.AppId, a.GroupId, a.TopicId, a.editMaps())
 }

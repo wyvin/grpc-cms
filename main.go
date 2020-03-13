@@ -10,5 +10,10 @@ func init() {
 }
 
 func main() {
+	//server.Port = "50052"
+	//server.CertPemPath = "./certs/cert.pem"
+	//server.KeyPemPath = "./certs/key.pem"
+	//server.CertName = "localhost"
 	cmd.Execute()
+	//_ = server.Run()
 }

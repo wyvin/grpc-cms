@@ -117,6 +117,47 @@ func (a articleService) GetArticleList(ctx context.Context, req *pb.GetArticleLi
 	}, nil
 }
 
+func (a articleService) GetArticlePlacementList(ctx context.Context, req *pb.GetArticlePlacementListRequest) (*pb.GetArticlePlacementListResponse, error) {
+	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
+		return nil, err
+	}
+
+	util.FormatPageAndPerPage(&req.Page, &req.PerPage)
+
+	articleInstance := articleDb.Article{
+		AppId:   req.AppId,
+		GroupId: req.GroupId,
+		Page:    req.Page,
+		PerPage: req.PerPage,
+		Source:  req.Source,
+		Title:   req.Title,
+	}
+	record, total, err := articleInstance.GetArticlePlacementList()
+	if err != nil {
+		return nil, err
+	}
+
+	list := make([]*pb.ArticlePlacementListElement, len(record))
+	for i := 0; i < len(record); i++ {
+		ele := record[i]
+		list[i] = &pb.ArticlePlacementListElement{
+			ArticleId:      uint32(ele.ID),
+			TopicId:        ele.TopicId,
+			Cover:          ele.Cover,
+			Title:          ele.Title,
+			Author:         ele.Author,
+			Source:         ele.Source,
+			Recommendation: ele.Recommendation,
+			ReleasedAt:     util.FormatDateTime(ele.ReleasedAt),
+		}
+	}
+
+	return &pb.GetArticlePlacementListResponse{
+		List:  list,
+		Total: total,
+	}, nil
+}
+
 func (a articleService) EditArticle(ctx context.Context, req *pb.EditArticleRequest) (*pb.RowsAffectedResponse, error) {
 	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
 		return nil, err
@@ -339,3 +380,38 @@ func (a articleService) DeleteArticleTopic(ctx context.Context, req *pb.DeleteAr
 		RowsAffected: rowsAffected,
 	}, nil
 }
+
+func (a articleService) GetArticleTopicPlacementList(ctx context.Context, req *pb.GetArticleTopicPlacementListRequest) (*pb.GetArticleTopicPlacementListResponse, error) {
+	if err := CheckAppIdAndGroupId(req.AppId, req.GroupId); err != nil {
+		return nil, err
+	}
+
+	util.FormatPageAndPerPage(&req.Page, &req.PerPage)
+
+	topicInstance := articleDb.ArticleTopic{
+		AppId:   req.AppId,
+		GroupId: req.GroupId,
+		Page:    req.Page,
+		PerPage: req.PerPage,
+	}
+	record, total, err := topicInstance.GetTopicPlacementList()
+	if err != nil {
+		return nil, err
+	}
+
+	list := make([]*pb.ArticleTopicPlacementListElement, len(record))
+	for i := 0; i < len(record); i++ {
+		ele := record[i]
+		list[i] = &pb.ArticleTopicPlacementListElement{
+			TopicId:   uint32(ele.ID),
+			Name:      ele.Name,
+			Sort:      ele.Sort,
+		}
+	}
+
+	return &pb.GetArticleTopicPlacementListResponse{
+		List:  list,
+		Total: total,
+	}, nil
+}
+

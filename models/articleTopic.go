@@ -97,3 +97,21 @@ func DeleteArticleTopic(appId string, groupId uint32, topicIdList []uint32) (uin
 	tx.Commit()
 	return uint32(result.RowsAffected), nil
 }
+
+// 获取专题列表
+func GetArticleTopicPlacementList(page, perPage uint32, maps interface{}) ([]ArticleTopic, uint32, error) {
+	var (
+		topicList []ArticleTopic
+		total     uint32
+		err       error
+	)
+
+	record := DB.Model(&ArticleTopic{}).Where(maps).Where("state = ?", ArticleTopicStateReleased)
+	err = record.Offset(page).Limit(perPage).Order("sort asc").Find(&topicList).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, 0, err
+	}
+	record.Count(&total)
+
+	return topicList, total, nil
+}
