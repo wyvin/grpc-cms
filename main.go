@@ -3,17 +3,14 @@ package main
 import (
 	"grpc-cms/cmd"
 	"grpc-cms/models"
+	"grpc-cms/pkg/setting"
 )
 
 func init() {
+	setting.Setup()
 	models.Setup()
 }
 
 func main() {
-	//server.Port = "50052"
-	//server.CertPemPath = "./certs/cert.pem"
-	//server.KeyPemPath = "./certs/key.pem"
-	//server.CertName = "localhost"
 	cmd.Execute()
-	//_ = server.Run()
 }

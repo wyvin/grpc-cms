@@ -20,36 +20,33 @@ func main() {
 		log.Println(err)
 	}
 
-	//c := pb.NewHelloWorldClient(conn)
-	//ctx := context.Background()
-	//body := &pb.HelloWorldRequest{
-	//}
 
-	//r, err := c.SayHelloWorld(ctx, body)
-	//if err != nil {
-	//	log.Println(err)
-	//}
-
+	// 广告模块测试
 	c := pb.NewAdClient(conn)
 	ctx := context.Background()
 
-	//body := &pb.AddAdRequest{
-	//	Name:        "testName",
-	//	Title:       "testTitle",
-	//	Description: "desc",
-	//	Remark:      "remark",
-	//	Cover:       "cover",
-	//	Url:         "url",
-	//	Priority:    1,
-	//	Display:     1,
-	//}
-	//
-	//rep, err := c.AddAd(ctx, body)
-	body := &pb.GetAdPlacementListRequest{
-		Page:    0,
-		PerPage: 0,
+	// 添加广告
+	body := &pb.AddAdRequest{
+		AppId:       "jx12345678",
+		GroupId:     999,
+		Name:        "testName",
+		Title:       "testTitle",
+		Description: "testDesc",
+		Remark:      "testRemark",
+		Cover:       "testCover",
+		Url:         "testUrl",
+		Priority:    99,
+		Display:     1,
+		State:       2,
 	}
-	rep, err := c.GetAdPlacementList(ctx, body)
+	rep, err := c.AddAd(ctx, body)
 	log.Println(rep)
-	log.Println(err)
+
+	//body := &pb.GetAdPlacementListRequest{
+	//	Page:    0,
+	//	PerPage: 0,
+	//}
+	//rep, err := c.GetAdPlacementList(ctx, body)
+	//log.Println(rep)
+	//log.Println(err)
 }

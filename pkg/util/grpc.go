@@ -25,7 +25,7 @@ func GrpcHandlerFunc(grpcServer *grpc.Server, otherHandler http.Handler) http.Ha
 		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
 			grpcServer.ServeHTTP(w, r)
 		} else {
-			log.Println(r.Method, r.Host, r.URL.String(), r.UserAgent())
+			log.Println(r.Method, r.Host, r.URL.String())
 			if r.Method == "POST" {
 				body, _ := ioutil.ReadAll(r.Body)
 				log.Printf("%s", body)

@@ -18,3 +18,5 @@
 *.DS_Store
 *.pb.go
 *.pb.gw.go
+
+deploy/
