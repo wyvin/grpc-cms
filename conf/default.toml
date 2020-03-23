@@ -3,6 +3,11 @@ httpPort = "50052"
 host = "0.0.0.0"
 hostName = "localhost"
 
+imagePrefixUrl = "http://127.0.0.1:50052"
+imageSavePath = "upload/images/"
+ImageMaxSize = 5
+ImageAllowExts = [".jpg", ".jpeg", ".png"]
+
 [database]
 driver = "mysql"
 user = "root"
