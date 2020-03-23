@@ -2,6 +2,7 @@ package server
 
 import (
 	"crypto/tls"
+	"github.com/spf13/viper"
 	"log"
 	"net"
 	"net/http"
@@ -16,15 +17,13 @@ import (
 )
 
 var (
-	Port        string
-	CertName    string
 	CertPemPath string
 	KeyPemPath  string
 	EndPoint    string
 )
 
 func Run() (err error) {
-	EndPoint = ":" + Port
+	EndPoint = viper.GetString("app.host") + ":" + viper.GetString("app.httpPort")
 	tlsConfig := util.GetTLSConfig(CertPemPath, KeyPemPath)
 
 	conn, err := net.Listen("tcp", EndPoint)
@@ -33,7 +32,7 @@ func Run() (err error) {
 	}
 	srv := newServer(conn, tlsConfig)
 
-	log.Printf("gRPC and https listen on: %s\n", Port)
+	log.Printf("gRPC and https listen on: %s\n", EndPoint)
 
 	if err = srv.Serve(tls.NewListener(conn, tlsConfig)); err != nil {
 		log.Printf("ListenAndServe: %v\n", err)
@@ -60,7 +59,7 @@ func newServer(conn net.Listener, tlsConfig *tls.Config) *http.Server {
 
 	// gw server
 	ctx := context.Background()
-	dcreds, err := credentials.NewClientTLSFromFile(CertPemPath, CertName)
+	dcreds, err := credentials.NewClientTLSFromFile(CertPemPath, viper.GetString("app.hostName"))
 	if err != nil {
 		log.Printf("Failed to create client TLS credentials %v", err)
 	}

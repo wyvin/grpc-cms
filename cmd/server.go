@@ -21,9 +21,7 @@ var serverCmd = &cobra.Command{
 }
 
 func init() {
-	serverCmd.Flags().StringVarP(&server.Port, "port", "p", "50052", "server port")
 	serverCmd.Flags().StringVarP(&server.CertPemPath, "cert-pem", "", "./certs/cert.pem", "cert pem path")
 	serverCmd.Flags().StringVarP(&server.KeyPemPath, "key-pem", "", "./certs/key.pem", "key pem path")
-	serverCmd.Flags().StringVarP(&server.CertName, "cert-name", "", "localhost", "server's hostname")
 	rootCmd.AddCommand(serverCmd)
 }

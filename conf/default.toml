@@ -1,7 +1,12 @@
+[app]
+httpPort = "50052"
+host = "0.0.0.0"
+hostName = "localhost"
+
 [database]
 driver = "mysql"
 user = "root"
 password = "admin123"
-host = "localhost"
+host = "127.0.0.1"
 name = "tp-cms"
 
